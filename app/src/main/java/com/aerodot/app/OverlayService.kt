@@ -163,13 +163,15 @@ class CrosshairView(context: Context) : View(context) {
         val offsetY = prefs.getFloat("offset_y", 0f)
         val color = prefs.getInt("color", Color.rgb(53, 217, 255))
         val shape = prefs.getString("shape", "Cross") ?: "Cross"
+        val variant = prefs.getInt("variant", 1).coerceIn(1, 8)
+        val variantScale = 0.7f + variant * 0.1f
         val centerX = width / 2f + offsetX * resources.displayMetrics.density
         val centerY = height / 2f + offsetY * resources.displayMetrics.density
-        val outer = size * resources.displayMetrics.density
+        val outer = size * resources.displayMetrics.density * variantScale
         val inner = gap * resources.displayMetrics.density
         paint.color = color
         paint.alpha = (opacity.coerceIn(0f, 1f) * 255).toInt()
-        paint.strokeWidth = thickness * resources.displayMetrics.density
+        paint.strokeWidth = thickness * resources.displayMetrics.density * (0.7f + variant * 0.075f)
         paint.style = Paint.Style.STROKE
 
         fun line(x1: Float, y1: Float, x2: Float, y2: Float) {
@@ -205,6 +207,26 @@ class CrosshairView(context: Context) : View(context) {
                 line(half, -half, inner, -inner)
                 line(-half, half, -inner, inner)
                 line(half, half, inner, inner)
+            }
+            "Square" -> canvas.drawRect(centerX - half, centerY - half, centerX + half, centerY + half, paint)
+            "Diamond" -> {
+                line(0f, -half, half, 0f)
+                line(half, 0f, 0f, half)
+                line(0f, half, -half, 0f)
+                line(-half, 0f, 0f, -half)
+            }
+            "Plus", "Small Cross", "Open Cross" -> {
+                val arm = if (shape == "Small Cross") half * 0.65f else half
+                line(-arm, 0f, -inner, 0f)
+                line(inner, 0f, arm, 0f)
+                line(0f, -arm, 0f, -inner)
+                line(0f, inner, 0f, arm)
+            }
+            "Star" -> {
+                line(-half, 0f, half, 0f)
+                line(0f, -half, 0f, half)
+                line(-half * .7f, -half * .7f, half * .7f, half * .7f)
+                line(half * .7f, -half * .7f, -half * .7f, half * .7f)
             }
             "Chevron" -> {
                 line(-half, inner, 0f, -half)
