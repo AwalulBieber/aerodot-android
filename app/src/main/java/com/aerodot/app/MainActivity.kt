@@ -83,6 +83,8 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun sendOverlay(action: String) {
+        if (action == OverlayService.ACTION_UPDATE && !OverlayService.running) return
+        if ((action == OverlayService.ACTION_SHOW || action == OverlayService.ACTION_HIDE) && !OverlayService.running) return
         val intent = Intent(this, OverlayService::class.java).setAction(action)
         if (action == OverlayService.ACTION_STOP) startService(intent)
         else startService(intent)
