@@ -125,7 +125,11 @@ class OverlayService : Service() {
                 WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
             PixelFormat.TRANSLUCENT
-        ).apply { gravity = Gravity.TOP or Gravity.START }
+        ).apply {
+            gravity = Gravity.TOP or Gravity.START
+            // Android 12+ only allows touch-through for not-touchable overlays under the obscuring-opacity limit.
+            alpha = 0.8f
+        }
         try {
             windowManager.addView(crosshairView, params)
             attached = true
