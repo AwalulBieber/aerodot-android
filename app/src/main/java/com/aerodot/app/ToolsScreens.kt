@@ -236,7 +236,8 @@ private fun ProfileTool(prefs: SharedPreferences, update: () -> Unit) {
                     prefs.getFloat("offset_x", 0f).toString(),
                     prefs.getFloat("offset_y", 0f).toString(),
                     prefs.getBoolean("center_dot", false).toString(),
-                    prefs.getInt("variant", 1).toString()
+                    prefs.getInt("variant", 1).toString(),
+                    prefs.getBoolean("outline", false).toString()
                 ).joinToString("|")
                 prefs.edit().putString("profile_" + name.trim(), data).apply()
                 name = ""
@@ -248,7 +249,7 @@ private fun ProfileTool(prefs: SharedPreferences, update: () -> Unit) {
                 Text(key.removePrefix("profile_"), color = Color.White, modifier = Modifier.weight(1f))
                 Text("LOAD", color = TC, modifier = Modifier.clickable {
                     val p = (prefs.getString(key, "") ?: "").split("|")
-                    if (p.size == 10) {
+                    if (p.size == 11) {
                         prefs.edit().putString("shape", p[0])
                             .putInt("color", p[1].toIntOrNull() ?: android.graphics.Color.CYAN)
                             .putFloat("size", p[2].toFloatOrNull() ?: 22f)
@@ -258,7 +259,8 @@ private fun ProfileTool(prefs: SharedPreferences, update: () -> Unit) {
                             .putFloat("offset_x", p[6].toFloatOrNull() ?: 0f)
                             .putFloat("offset_y", p[7].toFloatOrNull() ?: 0f)
                             .putBoolean("center_dot", p[8].toBoolean())
-                            .putInt("variant", p[9].toIntOrNull() ?: 1).apply()
+                            .putInt("variant", p[9].toIntOrNull() ?: 1)
+                            .putBoolean("outline", p[10].toBoolean()).apply()
                         update()
                     }
                 })
