@@ -46,7 +46,7 @@ jobs:
           set -o pipefail
 
       - name: Install Android SDK packages
-        run: sdkmanager --sdk_root="$ANDROID_HOME" --install "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+        run: sdkmanager --sdk_root="$ANDROID_HOME" --install "platform-tools" "platforms;android-36" "build-tools;36.0.0"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
