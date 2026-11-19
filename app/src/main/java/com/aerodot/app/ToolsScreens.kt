@@ -177,6 +177,7 @@ private fun CpsTool() {
             }
         }
         Text("TIME LEFT: " + seconds + "s", color = TM)
+        Text("CPS: " + if (seconds == 0) String.format("%.1f", taps / 10f) else "--", color = TC, fontWeight = FontWeight.Bold)
         Button(onClick = { if (!active) { taps = 0; seconds = 10; active = true } }, modifier = Modifier.fillMaxWidth()) {
             Text(if (active) "TEST RUNNING" else "START 10 SECOND TEST")
         }
