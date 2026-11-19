@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.aerodot.app"
-    compileSdk = 36
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.aerodot.app"
