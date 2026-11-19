@@ -40,7 +40,9 @@ private val shapeNames = listOf(
 private val presets = shapeNames.flatMap { shape -> (1..8).map { variant -> "$shape • V$variant" } }
 private val colors = listOf(
     Color(0xFF35D9FF), Color(0xFF00FF66), Color(0xFFFF3B3B), Color(0xFFFFFF00),
-    Color(0xFFFF55FF), Color(0xFFFFFFFF), Color(0xFFFF8C32), Color(0xFF7C4DFF)
+    Color(0xFFFF55FF), Color(0xFFFFFFFF), Color(0xFFFF8C32), Color(0xFF7C4DFF),
+    Color(0xFF00FFFF), Color(0xFFFF1493), Color(0xFFADFF2F), Color(0xFFFFD700),
+    Color(0xFF00BFFF), Color(0xFFFF4500), Color(0xFFDA70D6), Color(0xFFB0C4DE)
 )
 
 class MainActivity : ComponentActivity() {
@@ -114,6 +116,7 @@ private fun AeroDotApp(
     var offsetX by remember { mutableFloatStateOf(prefs.getFloat("offset_x", 0f)) }
     var offsetY by remember { mutableFloatStateOf(prefs.getFloat("offset_y", 0f)) }
     var centerDot by remember { mutableStateOf(prefs.getBoolean("center_dot", false)) }
+    var outlineEnabled by remember { mutableStateOf(prefs.getBoolean("outline", false)) }
     var page by remember { mutableStateOf("Home") }
 
     fun saveAndRefresh() {
@@ -128,6 +131,7 @@ private fun AeroDotApp(
             .putFloat("offset_x", offsetX)
             .putFloat("offset_y", offsetY)
             .putBoolean("center_dot", centerDot)
+            .putBoolean("outline", outlineEnabled)
             .apply()
         onUpdateOverlay()
     }
@@ -155,7 +159,8 @@ private fun AeroDotApp(
                         opacity, { opacity = it; saveAndRefresh() },
                         offsetX, { offsetX = it; saveAndRefresh() },
                         offsetY, { offsetY = it; saveAndRefresh() },
-                        centerDot, { centerDot = it; saveAndRefresh() }
+                        centerDot, { centerDot = it; saveAndRefresh() },
+                        outlineEnabled, { outlineEnabled = it; saveAndRefresh() }
                     )
                     "Tools" -> AeroDotTools(prefs, onUpdateOverlay)
                     else -> HomePage(onStartOverlay, onShowOverlay, onHideOverlay, onStopOverlay, onRequestOverlayPermission)
@@ -217,7 +222,8 @@ private fun CrosshairPage(
     opacity: Float, setOpacity: (Float) -> Unit,
     offsetX: Float, setOffsetX: (Float) -> Unit,
     offsetY: Float, setOffsetY: (Float) -> Unit,
-    centerDot: Boolean, setCenterDot: (Boolean) -> Unit
+    centerDot: Boolean, setCenterDot: (Boolean) -> Unit,
+    outlineEnabled: Boolean, setOutlineEnabled: (Boolean) -> Unit
 ) {
     Column(Modifier.fillMaxWidth().fillMaxHeight().padding(bottom = 8.dp)) {
         Text("CROSSHAIR EDITOR", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
@@ -254,6 +260,17 @@ private fun CrosshairPage(
                 Text("Center dot", color = Color.White)
                 Switch(checked = centerDot, onCheckedChange = setCenterDot)
             }
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+                Text("Outline / glow", color = Color.White)
+                Switch(checked = outlineEnabled, onCheckedChange = setOutlineEnabled)
+            }
+            Text("RGB COLOR", color = Muted, fontSize = 11.sp, letterSpacing = 1.5.sp)
+            val red = android.graphics.Color.red(color).toFloat()
+            val green = android.graphics.Color.green(color).toFloat()
+            val blue = android.graphics.Color.blue(color).toFloat()
+            SettingSlider("Red", red, 0f..255f) { setColor(android.graphics.Color.rgb(it.toInt(), android.graphics.Color.green(color), android.graphics.Color.blue(color))) }
+            SettingSlider("Green", green, 0f..255f) { setColor(android.graphics.Color.rgb(android.graphics.Color.red(color), it.toInt(), android.graphics.Color.blue(color))) }
+            SettingSlider("Blue", blue, 0f..255f) { setColor(android.graphics.Color.rgb(android.graphics.Color.red(color), android.graphics.Color.green(color), it.toInt())) }
         }
     }
 }
