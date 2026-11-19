@@ -2,6 +2,7 @@ package com.aerodot.app
 
 import android.Manifest
 import android.content.Intent
+import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -22,6 +23,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -99,7 +101,7 @@ private fun AeroDotApp(
     onUpdateOverlay: () -> Unit
 ) {
     val context = androidx.compose.ui.platform.LocalContext.current
-    val prefs = remember { context.getSharedPreferences("aerodot_settings", MODE_PRIVATE) }
+    val prefs = remember { context.getSharedPreferences("aerodot_settings", Context.MODE_PRIVATE) }
     var selectedShape by remember { mutableStateOf(prefs.getString("shape", "Cross") ?: "Cross") }
     var selectedColor by remember { mutableIntStateOf(prefs.getInt("color", android.graphics.Color.rgb(53,217,255))) }
     var size by remember { mutableFloatStateOf(prefs.getFloat("size", 22f)) }
@@ -224,7 +226,7 @@ private fun CrosshairPage(
             colors.forEach { swatch ->
                 Box(
                     Modifier.size(29.dp).background(swatch, CircleShape)
-                        .border(if (color == swatch.value.toInt()) 3.dp else 1.dp, Color.White.copy(alpha = .7f), CircleShape)
+                        .border(if (color == swatch.toArgb()) 3.dp else 1.dp, Color.White.copy(alpha = .7f), CircleShape)
                         .clickable { setColor(swatch.value.toInt()) }
                 )
             }
