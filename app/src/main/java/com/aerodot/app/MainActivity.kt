@@ -152,7 +152,7 @@ private fun AeroDotApp(
                         offsetY, { offsetY = it; saveAndRefresh() },
                         centerDot, { centerDot = it; saveAndRefresh() }
                     )
-                    "Tools" -> ToolsPage()
+                    "Tools" -> AeroDotTools(prefs, onUpdateOverlay)
                     else -> HomePage(onStartOverlay, onShowOverlay, onHideOverlay, onStopOverlay, onRequestOverlayPermission)
                 }
             }
