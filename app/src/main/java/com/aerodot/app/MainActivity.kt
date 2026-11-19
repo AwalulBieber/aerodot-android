@@ -32,10 +32,11 @@ private val Bg = Color(0xFF080D16)
 private val Panel = Color(0xFF111B2A)
 private val Cyan = Color(0xFF35D9FF)
 private val Muted = Color(0xFF91A4B8)
-private val presets = listOf(
+private val shapeNames = listOf(
     "Cross", "X-Cross", "T-Cross", "Circle", "Dual Ring", "Chevron", "Brackets", "Corners",
     "Sniper", "Dot", "Plus", "Small Cross", "Open Cross", "Square", "Diamond", "Star"
 )
+private val presets = shapeNames.flatMap { shape -> (1..8).map { variant -> "$shape • V$variant" } }
 private val colors = listOf(
     Color(0xFF35D9FF), Color(0xFF00FF66), Color(0xFFFF3B3B), Color(0xFFFFFF00),
     Color(0xFFFF55FF), Color(0xFFFFFFFF), Color(0xFFFF8C32), Color(0xFF7C4DFF)
@@ -103,6 +104,7 @@ private fun AeroDotApp(
     val context = androidx.compose.ui.platform.LocalContext.current
     val prefs = remember { context.getSharedPreferences("aerodot_settings", Context.MODE_PRIVATE) }
     var selectedShape by remember { mutableStateOf(prefs.getString("shape", "Cross") ?: "Cross") }
+    var selectedVariant by remember { mutableIntStateOf(prefs.getInt("variant", 1)) }
     var selectedColor by remember { mutableIntStateOf(prefs.getInt("color", android.graphics.Color.rgb(53,217,255))) }
     var size by remember { mutableFloatStateOf(prefs.getFloat("size", 22f)) }
     var thickness by remember { mutableFloatStateOf(prefs.getFloat("thickness", 2.5f)) }
@@ -116,6 +118,7 @@ private fun AeroDotApp(
     fun saveAndRefresh() {
         prefs.edit()
             .putString("shape", selectedShape)
+            .putInt("variant", selectedVariant)
             .putInt("color", selectedColor)
             .putFloat("size", size)
             .putFloat("thickness", thickness)
@@ -143,6 +146,7 @@ private fun AeroDotApp(
                     "Home" -> HomePage(onStartOverlay, onShowOverlay, onHideOverlay, onStopOverlay, onRequestOverlayPermission)
                     "Crosshair" -> CrosshairPage(
                         selectedShape, { selectedShape = it; saveAndRefresh() },
+                        selectedVariant, { selectedVariant = it; saveAndRefresh() },
                         selectedColor, { selectedColor = it; saveAndRefresh() },
                         size, { size = it; saveAndRefresh() },
                         thickness, { thickness = it; saveAndRefresh() },
@@ -204,6 +208,7 @@ private fun HomePage(
 @Composable
 private fun CrosshairPage(
     shape: String, setShape: (String) -> Unit,
+    variant: Int, setVariant: (Int) -> Unit,
     color: Int, setColor: (Int) -> Unit,
     size: Float, setSize: (Float) -> Unit,
     thickness: Float, setThickness: (Float) -> Unit,
@@ -218,8 +223,14 @@ private fun CrosshairPage(
         Text("Choose a style and fine-tune every detail.", color = Muted, fontSize = 12.sp)
         Spacer(Modifier.height(12.dp))
         Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            presets.forEach { name ->
-                FilterChip(selected = shape == name, onClick = { setShape(name) }, label = { Text(name) })
+            presets.forEach { label ->
+                val presetShape = label.substringBefore(" • V")
+                val presetVariant = label.substringAfter("V").toIntOrNull() ?: 1
+                FilterChip(
+                    selected = shape == presetShape && variant == presetVariant,
+                    onClick = { setShape(presetShape); setVariant(presetVariant) },
+                    label = { Text(label) }
+                )
             }
         }
         Row(Modifier.fillMaxWidth().padding(vertical = 10.dp), horizontalArrangement = Arrangement.spacedBy(9.dp), verticalAlignment = Alignment.CenterVertically) {
