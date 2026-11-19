@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -234,7 +235,8 @@ private fun ProfileTool(prefs: SharedPreferences, update: () -> Unit) {
                     prefs.getFloat("opacity", 1f).toString(),
                     prefs.getFloat("offset_x", 0f).toString(),
                     prefs.getFloat("offset_y", 0f).toString(),
-                    prefs.getBoolean("center_dot", false).toString()
+                    prefs.getBoolean("center_dot", false).toString(),
+                    prefs.getInt("variant", 1).toString()
                 ).joinToString("|")
                 prefs.edit().putString("profile_" + name.trim(), data).apply()
                 name = ""
@@ -246,7 +248,7 @@ private fun ProfileTool(prefs: SharedPreferences, update: () -> Unit) {
                 Text(key.removePrefix("profile_"), color = Color.White, modifier = Modifier.weight(1f))
                 Text("LOAD", color = TC, modifier = Modifier.clickable {
                     val p = (prefs.getString(key, "") ?: "").split("|")
-                    if (p.size == 9) {
+                    if (p.size == 10) {
                         prefs.edit().putString("shape", p[0])
                             .putInt("color", p[1].toIntOrNull() ?: android.graphics.Color.CYAN)
                             .putFloat("size", p[2].toFloatOrNull() ?: 22f)
@@ -255,7 +257,8 @@ private fun ProfileTool(prefs: SharedPreferences, update: () -> Unit) {
                             .putFloat("opacity", p[5].toFloatOrNull() ?: 1f)
                             .putFloat("offset_x", p[6].toFloatOrNull() ?: 0f)
                             .putFloat("offset_y", p[7].toFloatOrNull() ?: 0f)
-                            .putBoolean("center_dot", p[8].toBoolean()).apply()
+                            .putBoolean("center_dot", p[8].toBoolean())
+                            .putInt("variant", p[9].toIntOrNull() ?: 1).apply()
                         update()
                     }
                 })
