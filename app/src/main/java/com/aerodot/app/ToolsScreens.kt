@@ -82,6 +82,7 @@ private fun AimTool() {
             running = false
         }
     }
+    Column(Modifier.fillMaxSize()) {
     Text("AIM TRAINER", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
     Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
         listOf("Easy", "Normal", "Hard").forEach {
@@ -104,6 +105,7 @@ private fun AimTool() {
     }
     Button(onClick = { if (!running) { hits = 0; time = 30; running = true } }, modifier = Modifier.fillMaxWidth()) {
         Text(if (running) "RUNNING..." else "START 30 SECOND DRILL")
+    }
     }
 }
 
