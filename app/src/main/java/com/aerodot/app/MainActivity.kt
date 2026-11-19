@@ -146,7 +146,7 @@ private fun AeroDotApp(
                         Text("AeroDot", color = Cyan, fontSize = 28.sp, fontWeight = FontWeight.Black)
                         Text("CROSSHAIR PRO • GAMING TOOLS", color = Muted, fontSize = 10.sp, letterSpacing = 1.5.sp)
                     }
-                    Text("● LIVE", color = Color(0xFF00E676), fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    Text("● READY", color = Color(0xFF00E676), fontSize = 11.sp, fontWeight = FontWeight.Bold)
                 }
                 Spacer(Modifier.height(18.dp))
                 when (page) {
