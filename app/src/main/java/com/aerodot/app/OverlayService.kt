@@ -31,6 +31,8 @@ class OverlayService : Service() {
         const val ACTION_UPDATE = "com.aerodot.app.OVERLAY_UPDATE"
         private const val CHANNEL_ID = "aerodot_overlay"
         private const val NOTIFICATION_ID = 410
+        @Volatile var running: Boolean = false
+            private set
     }
 
     private lateinit var windowManager: WindowManager
@@ -39,6 +41,7 @@ class OverlayService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        running = true
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         createNotificationChannel()
     }
@@ -140,6 +143,7 @@ class OverlayService : Service() {
 
     override fun onDestroy() {
         hideOverlay()
+        running = false
         super.onDestroy()
     }
 
@@ -173,6 +177,9 @@ class CrosshairView(context: Context) : View(context) {
         paint.alpha = (opacity.coerceIn(0f, 1f) * 255).toInt()
         paint.strokeWidth = thickness * resources.displayMetrics.density * (0.7f + variant * 0.075f)
         paint.style = Paint.Style.STROKE
+        if (prefs.getBoolean("outline", false)) {
+            paint.setShadowLayer(thickness * resources.displayMetrics.density * 2.2f, 0f, 0f, prefs.getInt("outline_color", Color.BLACK))
+        }
 
         fun line(x1: Float, y1: Float, x2: Float, y2: Float) {
             canvas.drawLine(centerX + x1, centerY + y1, centerX + x2, centerY + y2, paint)
@@ -250,5 +257,6 @@ class CrosshairView(context: Context) : View(context) {
             paint.style = Paint.Style.FILL
             canvas.drawCircle(centerX, centerY, max(1.5f, thickness), paint)
         }
+        paint.clearShadowLayer()
     }
 }
