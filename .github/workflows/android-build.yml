@@ -40,7 +40,10 @@ jobs:
 
       - name: Accept Android SDK licenses
         shell: bash
-        run: yes | sdkmanager --sdk_root="$ANDROID_HOME" --licenses
+        run: |
+          set +o pipefail
+          yes | sdkmanager --sdk_root="$ANDROID_HOME" --licenses
+          set -o pipefail
 
       - name: Install Android SDK packages
         run: sdkmanager --sdk_root="$ANDROID_HOME" --install "platform-tools" "platforms;android-35" "build-tools;35.0.0"
