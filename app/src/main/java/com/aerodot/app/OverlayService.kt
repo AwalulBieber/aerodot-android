@@ -84,7 +84,7 @@ class OverlayService : Service() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.ic_menu_cross)
+            .setSmallIcon(android.R.drawable.ic_menu_info_details)
             .setContentTitle("AeroDot is active")
             .setContentText("Crosshair overlay controls")
             .setContentIntent(openIntent)
